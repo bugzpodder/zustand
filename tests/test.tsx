@@ -13,11 +13,10 @@ import create, {
   StateSelector,
   PartialState,
   EqualityChecker,
-  Subscriber,
   StateCreator,
   SetState,
   GetState,
-  ApiSubscribe,
+  Subscribe,
   Destroy,
   UseStore,
   StoreApi,
@@ -658,15 +657,6 @@ it('can use exposed types', () => {
     },
   })
 
-  const subscriber: Subscriber<ExampleState, number> = {
-    currentSlice: 1,
-    equalityFn: Object.is,
-    errored: false,
-    listener(n: number | null) {},
-    selector,
-    unsubscribe: () => {},
-  }
-
   function checkAllTypes(
     getState: GetState<ExampleState>,
     partialState: PartialState<ExampleState>,
@@ -675,12 +665,11 @@ it('can use exposed types', () => {
     stateListener: StateListener<ExampleState>,
     stateSelector: StateSelector<ExampleState, number>,
     storeApi: StoreApi<ExampleState>,
-    subscribe: ApiSubscribe<ExampleState>,
+    subscribe: Subscribe<ExampleState>,
     destroy: Destroy,
     equalityFn: EqualityChecker<ExampleState>,
     stateCreator: StateCreator<ExampleState>,
-    useStore: UseStore<ExampleState>,
-    subscribeOptions: Subscriber<ExampleState, number>
+    useStore: UseStore<ExampleState>
   ) {
     expect(true).toBeTruthy()
   }
@@ -697,7 +686,6 @@ it('can use exposed types', () => {
     storeApi.destroy,
     equlaityFn,
     stateCreator,
-    useStore,
-    subscriber
+    useStore
   )
 })
