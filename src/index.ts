@@ -102,13 +102,17 @@ export default function create<TState extends State>(
       let errored = false
       return {
         getCurrentValue: () => {
-          if (errored) {
-            errored = false
-            const newStateSlice = selector(state)
-            if (equalityFn(currentSlice, newStateSlice)) {
-              return currentSlice
+          try {
+            if (errored) {
+              errored = false
+              const newStateSlice = selector(state)
+              if (equalityFn(currentSlice, newStateSlice)) {
+                return currentSlice
+              }
+              return newStateSlice
             }
-            return newStateSlice
+          } catch (e) {
+            // ignore and useSubscription will schedule update
           }
           return currentSlice
         },
