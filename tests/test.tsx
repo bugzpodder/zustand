@@ -84,8 +84,8 @@ it('uses the store with selectors', async () => {
   }))
 
   function Counter() {
-    const count = useStore(s => s.count)
-    const inc = useStore(s => s.inc)
+    const count = useStore(React.useCallback(s => s.count, []))
+    const inc = useStore(React.useCallback(s => s.inc, []))
     React.useEffect(inc, [])
     return <div>count: {count}</div>
   }
@@ -101,7 +101,10 @@ it('uses the store with a selector and equality checker', async () => {
 
   function Component() {
     // Prevent re-render if new value === 1.
-    const value = useStore(s => s.value, (_, newValue) => newValue === 1)
+    const value = useStore(
+      React.useCallback(s => s.value, []),
+      React.useCallback((_, newValue) => newValue === 1, [])
+    )
     return (
       <div>
         renderCount: {++renderCount}, value: {value}
@@ -131,13 +134,13 @@ it('only re-renders if selected state has changed', async () => {
   let controlRenderCount = 0
 
   function Counter() {
-    const count = useStore(state => state.count)
+    const count = useStore(React.useCallback(state => state.count, []))
     counterRenderCount++
     return <div>count: {count}</div>
   }
 
   function Control() {
-    const inc = useStore(state => state.inc)
+    const inc = useStore(React.useCallback(state => state.inc, []))
     controlRenderCount++
     return <button onClick={inc}>button</button>
   }
@@ -465,7 +468,7 @@ it('only calls selectors when necessary', async () => {
   }
 
   function Component() {
-    useStore(s => (inlineSelectorCallCount++, s.b))
+    useStore(React.useCallback(s => (inlineSelectorCallCount++, s.b), []))
     useStore(staticSelector)
     return (
       <>
@@ -505,12 +508,12 @@ it('ensures parent components subscribe before children', async () => {
   }
 
   function Child({ id }) {
-    const text = useStore(s => s.children[id].text)
+    const text = useStore(React.useCallback(s => s.children[id].text, []))
     return <div>{text}</div>
   }
 
   function Parent() {
-    const childStates = useStore(s => s.children)
+    const childStates = useStore(React.useCallback(s => s.children, []))
     return (
       <>
         <button onClick={changeState}>change state</button>
@@ -537,7 +540,7 @@ it('ensures the correct subscriber is removed on unmount', async () => {
   }
 
   function Count() {
-    const c = useStore(s => s.count)
+    const c = useStore(React.useCallback(s => s.count, []))
     return <div>count: {c}</div>
   }
 
@@ -575,12 +578,12 @@ it('ensures a subscriber is not mistakenly overwritten', async () => {
   const [useStore, { setState }] = create(() => ({ count: 0 }))
 
   function Count1() {
-    const c = useStore(s => s.count)
+    const c = useStore(React.useCallback(s => s.count, []))
     return <div>count1: {c}</div>
   }
 
   function Count2() {
-    const c = useStore(s => s.count)
+    const c = useStore(React.useCallback(s => s.count, []))
     return <div>count2: {c}</div>
   }
 
